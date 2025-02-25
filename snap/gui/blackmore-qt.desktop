@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=26.2.0
+Version=1.0
 Name=Blackcoin More
 Comment=Connect to the Blackcoin P2P Network
 Exec=blackcoin-more.qt %u
