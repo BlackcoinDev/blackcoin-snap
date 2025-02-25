@@ -1,0 +1,110 @@
+name: blackcoin
+title: 'Blackcoin More QT Wallet'
+version: '26.2.0'
+summary: proof of stake decentralized digital currency
+description: |
+  Blackcoin is a decentralized digital currency with near-instant transaction
+  speeds and negligible transaction fees built upon Proof of Stake 3.0 (PoSV3, BPoS)
+  as introduced by the Blackcoin development team.
+
+  Blackcoin More is the name of open source software which enables the use of this currency.
+  It takes Blackcoin to the next level by building upon Bitcoin Core 26.2.0 with some patches
+  from newer Bitcoin Core versions to offer performance enhancements, wider compatibility
+  with third-party services, and a more advanced base.
+
+  For more information, as well as an immediately usable, binary version of the Blackcoin More
+  software, see https://blackcoinmore.org
+
+  For more information about Blackcoin itself, see https://blackcoin.org
+contact: team@blackcoin.org
+issues: https://github.com/CoinBlack/blackcoin-snap/issues
+source-code: https://github.com/CoinBlack/blackcoin-snap.git
+icon: snap/gui/logo.png
+license: MIT
+
+grade: stable
+confinement: strict
+base: core20
+compression: lzo
+architectures:
+  - build-on: amd64
+    run-on: amd64
+  - build-on: arm64
+    run-on: arm64
+  - build-on: armhf
+    run-on: armhf
+
+apps:
+  daemon:
+    command: bin/blackmored
+    plugs: [home, removable-media, network, network-bind]
+    environment:
+      # Override HOME so the datadir is located at
+      # ~/snap/blackcoin-more/common/.blackmore/ instead of
+      # ~/snap/blackcoin-more/current/.blackmore/, and each new version of the
+      # snap won't have a different data directory:
+      # https://docs.snapcraft.io/environment-variables/7983
+      HOME: $SNAP_USER_COMMON
+  qt:
+    command: bin/desktop-launch $SNAP/bin/blackmore-qt
+    plugs: [home, removable-media, network, network-bind, desktop, x11, unity7]
+    environment:
+      HOME: $SNAP_USER_COMMON
+      DISABLE_WAYLAND: 1
+  cli:
+    command: bin/blackmore-cli
+    plugs: [home, removable-media, network]
+    environment:
+      HOME: $SNAP_USER_COMMON
+  tx:
+    command: bin/blackmore-tx
+    environment:
+      HOME: $SNAP_USER_COMMON
+
+parts:
+  # Needed to supply desktop-launch
+  # Paste from https://github.com/ubuntu/snapcraft-desktop-helpers/blob/master/snapcraft.yaml
+  # Boilerplate seems to be required according to https://bugs.launchpad.net/snapcraft/+bug/1800057
+  desktop-qt5:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-depth: 1
+    source-subdir: qt
+    source-commit: e654ad79a039afdf5f2913ab0e1ce2d43b7ca745
+    plugin: make
+    make-parameters: ["FLAVOR=qt5"]
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - dpkg-dev
+    stage-packages:
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libqt5gui5
+      - libgdk-pixbuf2.0-0
+      - libqt5svg5 # for loading icon themes which are svg
+      - locales-all
+      - xdg-user-dirs
+      - fcitx-frontend-qt5
+      - libgtk2.0-0
+
+  blackcoin-more:
+    plugin: nil
+    override-build: | 
+      env | grep SNAP
+      wget https://github.com/CoinBlack/blackcoin-more/releases/download/v${SNAPCRAFT_PROJECT_VERSION}/blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}-${SNAPCRAFT_ARCH_TRIPLET}.tar.gz
+      tar -xvf blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}-${SNAPCRAFT_ARCH_TRIPLET}.tar.gz
+      install -m 0755 -D -t $SNAPCRAFT_PART_INSTALL/bin blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}/bin/blackmored
+      install -m 0755 -D -t $SNAPCRAFT_PART_INSTALL/bin blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}/bin/blackmore-qt
+      install -m 0755 -D -t $SNAPCRAFT_PART_INSTALL/bin blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}/bin/blackmore-cli
+      install -m 0755 -D -t $SNAPCRAFT_PART_INSTALL/bin blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}/bin/blackmore-tx
+      wget https://raw.githubusercontent.com/CoinBlack/blackcoin-more/master/share/pixmaps/bitcoin128.png
+      install -m 0644 -D -t $SNAPCRAFT_PART_INSTALL/share/pixmaps bitcoin128.png
+    build-packages:
+      - wget
+    after:
+      - desktop-qt5

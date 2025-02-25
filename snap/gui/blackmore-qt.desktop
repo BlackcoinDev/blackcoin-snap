@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=26.2.0
+Name=Blackcoin More
+Comment=Connect to the Blackcoin P2P Network
+Exec=blackcoin-more.qt %u
+Terminal=false
+Type=Application
+Icon=${SNAP}/share/pixmaps/bitcoin128.png
+MimeType=x-scheme-handler/blackcoin;
+Categories=Office;Finance;P2P;Network;Qt;
+StartupWMClass=blackmore-qt
