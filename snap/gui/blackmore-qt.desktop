@@ -2,7 +2,7 @@
 Version=1.0
 Name=Blackcoin More
 Comment=Connect to the Blackcoin P2P Network
-Exec=blackcoin-more.qt %u
+Exec=blackcoin.qt %u
 Terminal=false
 Type=Application
 Icon=${SNAP}/share/pixmaps/bitcoin128.png
