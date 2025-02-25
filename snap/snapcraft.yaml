@@ -40,8 +40,8 @@ apps:
     plugs: [home, removable-media, network, network-bind]
     environment:
       # Override HOME so the datadir is located at
-      # ~/snap/blackcoin-more/common/.blackmore/ instead of
-      # ~/snap/blackcoin-more/current/.blackmore/, and each new version of the
+      # ~/snap/blackcoin/common/.blackmore/ instead of
+      # ~/snap/blackcoin/current/.blackmore/, and each new version of the
       # snap won't have a different data directory:
       # https://docs.snapcraft.io/environment-variables/7983
       HOME: $SNAP_USER_COMMON
@@ -60,6 +60,15 @@ apps:
     command: bin/blackmore-tx
     environment:
       HOME: $SNAP_USER_COMMON
+  wallet:
+    command: bin/blackmore-wallet
+    plugs: [home, removable-media]
+    environment:
+      HOME: $SNAP_USER_COMMON
+  util:
+    command: blackmore-util
+    environment:
+      HOME: $SNAP_USER_COMMON
 
 parts:
   # Needed to supply desktop-launch
@@ -69,7 +78,7 @@ parts:
     source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
     source-depth: 1
     source-subdir: qt
-    source-commit: e654ad79a039afdf5f2913ab0e1ce2d43b7ca745
+    source-commit: ec861254c2a1d2447b2c589446e6cdf04c75c260
     plugin: make
     make-parameters: ["FLAVOR=qt5"]
     build-packages:
@@ -87,12 +96,12 @@ parts:
       - libqt5gui5
       - libgdk-pixbuf2.0-0
       - libqt5svg5 # for loading icon themes which are svg
+      - try: [appmenu-qt5] # not available on core18
       - locales-all
       - xdg-user-dirs
       - fcitx-frontend-qt5
-      - libgtk2.0-0
 
-  blackcoin-more:
+  blackcoin:
     plugin: nil
     override-build: | 
       env | grep SNAP
@@ -102,6 +111,8 @@ parts:
       install -m 0755 -D -t $SNAPCRAFT_PART_INSTALL/bin blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}/blackmore-qt
       install -m 0755 -D -t $SNAPCRAFT_PART_INSTALL/bin blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}/blackmore-cli
       install -m 0755 -D -t $SNAPCRAFT_PART_INSTALL/bin blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}/blackmore-tx
+      install -m 0755 -D -t $SNAPCRAFT_PART_INSTALL/bin blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}/blackmore-wallet
+      install -m 0755 -D -t $SNAPCRAFT_PART_INSTALL/bin blackcoin-more-${SNAPCRAFT_PROJECT_VERSION}/blackmore-util
       wget https://raw.githubusercontent.com/CoinBlack/blackcoin-more/master/share/pixmaps/bitcoin128.png
       install -m 0644 -D -t $SNAPCRAFT_PART_INSTALL/share/pixmaps bitcoin128.png
     build-packages:
