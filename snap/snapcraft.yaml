@@ -66,7 +66,7 @@ apps:
     environment:
       HOME: $SNAP_USER_COMMON
   util:
-    command: blackmore-util
+    command: bin/blackmore-util
     environment:
       HOME: $SNAP_USER_COMMON
 
@@ -87,19 +87,23 @@ parts:
       - dpkg-dev
     stage-packages:
       - libxkbcommon0
+      - fonts-ubuntu
       - ttf-ubuntu-font-family
       - dmz-cursor-theme
+      - gtk2-engines-murrine
       - light-themes
       - adwaita-icon-theme
+      - gtk2-engines-pixbuf
       - gnome-themes-standard
       - shared-mime-info
       - libqt5gui5
       - libgdk-pixbuf2.0-0
       - libqt5svg5 # for loading icon themes which are svg
-      - try: [appmenu-qt5] # not available on core18
+      - appmenu-gtk2-module
       - locales-all
       - xdg-user-dirs
       - fcitx-frontend-qt5
+      - libgtk2.0-0
 
   blackcoin:
     plugin: nil
