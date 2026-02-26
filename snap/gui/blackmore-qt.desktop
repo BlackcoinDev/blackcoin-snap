@@ -7,5 +7,5 @@ Terminal=false
 Type=Application
 Icon=${SNAP}/share/pixmaps/bitcoin128.png
 MimeType=x-scheme-handler/blackcoin;
-Categories=Office;Finance;P2P;Network;Qt;
+Categories=Office;P2P;Network;Qt;
 StartupWMClass=blackmore-qt
